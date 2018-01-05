@@ -1,10 +1,16 @@
-from aiohttp import web
+#from aiohttp import web
 from txtprocessor import test
-from routes import setup_routes
+#from routes import setup_routes
+import os
+from flask import Flask
 
-app = web.Application()
-setup_routes(app)
-#log.debug('Start server')
-#web.run_app(app, host='127.0.0.1', port=8080)
-web.run_app(app)
+app = Flask(__name__)
+
+@app.route("/")
+def hello():
+    return "Hello world!"
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
 

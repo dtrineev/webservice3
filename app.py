@@ -3,6 +3,7 @@ from threading import Lock
 from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO, emit, join_room, leave_room, \
     close_room, rooms, disconnect
+import pymorphy2
 
 # Set this variable to "threading", "eventlet" or "gevent" to test the
 # different async modes, or leave it set to None for the application to choose
@@ -20,7 +21,7 @@ def background_thread():
     """Example of how to send server generated events to clients."""
     count = 0
     while True:
-        socketio.sleep(10)
+        socketio.sleep(100)
         count += 1
         socketio.emit('my_response',
                       {'data': 'Server generated event', 'count': count},
@@ -35,6 +36,9 @@ def index():
 @socketio.on('my_event', namespace='/test')
 def test_message(message):
     session['receive_count'] = session.get('receive_count', 0) + 1
+	
+	morph = pymorphy2.MorphAnalyzer()
+	
     emit('my_response',
          {'data': message['data'], 'count': session['receive_count']})
 

@@ -37,10 +37,11 @@ def index():
 def test_message(message):
     session['receive_count'] = session.get('receive_count', 0) + 1
 	
-	morph = pymorphy2.MorphAnalyzer()
+    morph = pymorphy2.MorphAnalyzer()
+    text = message['data']+'ddddd'
 	
-    emit('my_response',
-         {'data': message['data'], 'count': session['receive_count']})
+    emit('txt_processor',
+         {'data': text, 'count': session['receive_count']})
 
 
 @socketio.on('my_broadcast_event', namespace='/test')

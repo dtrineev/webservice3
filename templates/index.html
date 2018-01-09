@@ -32,6 +32,10 @@
             socket.on('my_response', function(msg) {
                 $('#log').append('<br>' + $('<div/>').text('Received #' + msg.count + ': ' + msg.data).html());
             });
+			
+			socket.on('txt_processor', function(msg) {
+                $('#log').append('<br>' + $('<div/>').text('Processed #' + msg.count + ': ' + msg.data).html());
+            });
 
             // Interval function that tests message latency by sending a "ping"
             // message. The server then responds with a "pong" message and the

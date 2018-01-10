@@ -32,7 +32,12 @@ def background_thread():
 def index():
     return render_template('index.html', async_mode=socketio.async_mode)
 
-
+@socketio.on('connect_event', namespace='/test')
+def test_message(message):
+    session['receive_count'] = session.get('receive_count', 0) + 1
+    emit('my_response',
+         {'data': text, 'count': session['receive_count']})
+    
 @socketio.on('my_event', namespace='/test')
 def test_message(message):
     session['receive_count'] = session.get('receive_count', 0) + 1
@@ -40,8 +45,7 @@ def test_message(message):
     morph = pymorphy2.MorphAnalyzer()
     text = message['data']+'ddddd'
     emit('my_response',
-         {'data': message['data'], 'count': session['receive_count']})
-
+         {'data': text, 'count': session['receive_count']})
 
 @socketio.on('my_broadcast_event', namespace='/test')
 def test_broadcast_message(message):

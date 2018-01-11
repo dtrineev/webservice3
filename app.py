@@ -6,7 +6,7 @@ from flask_socketio import SocketIO, emit, join_room, leave_room, \
 import pymorphy2
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
-#import string
+import string
 
 # Set this variable to "threading", "eventlet" or "gevent" to test the
 # different async modes, or leave it set to None for the application to choose
@@ -51,10 +51,10 @@ def test_message(message):
     tokens = word_tokenize(text)
 
     #Очистить текст от знаков препинания
-#    tokens = [i for i in tokens if ( i not in string.punctuation )]
+    tokens = [i for i in tokens if ( i not in string.punctuation )]
     
     emit('my_response',
-         {'data': text, 'count': session['receive_count']})
+         {'data': tokens, 'count': session['receive_count']})
 
 @socketio.on('disconnect_request', namespace='/test')
 def disconnect_request():

@@ -52,6 +52,13 @@ def test_message(message):
 
     #Очистить текст от знаков препинания
     tokens = [i for i in tokens if ( i not in string.punctuation )]
+
+    #Выкашивание опечаток
+
+    #Убрать лишние слова по стоп-листу
+    stop_words = stopwords.words('russian')
+    stop_words.extend(['что', 'это', 'так', 'вот', 'быть', 'как', 'в', '—', 'к', 'на'])
+    tokens = [i for i in tokens if ( i not in stop_words )]
     
     emit('my_response',
          {'data': tokens, 'count': session['receive_count']})

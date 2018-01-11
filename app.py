@@ -36,14 +36,14 @@ def index():
 def connect_message(message):
     session['receive_count'] = session.get('receive_count', 0) + 1
     emit('my_response',
-         {'data': text, 'count': session['receive_count']})
+         {'data': message['data'], 'count': session['receive_count']})
     
 @socketio.on('my_event', namespace='/test')
 def test_message(message):
     session['receive_count'] = session.get('receive_count', 0) + 1
 	
     morph = pymorphy2.MorphAnalyzer()
-    text = message['data']+'ddddd'
+    text = message['data']
     emit('my_response',
          {'data': text, 'count': session['receive_count']})
 

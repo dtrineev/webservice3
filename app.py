@@ -7,6 +7,7 @@ import pymorphy2
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 import string
+import requests
 
 # Set this variable to "threading", "eventlet" or "gevent" to test the
 # different async modes, or leave it set to None for the application to choose
@@ -54,6 +55,16 @@ def test_message(message):
     tokens = [i for i in tokens if ( i not in string.punctuation )]
 
     #Выкашивание опечаток
+    for key in tokens:
+            params = {'text': key, 'lang': 'ru'}
+            r = requests.get('http://speller.yandex.net/services/spellservice.json/checkText', params=params)
+            if r.status_code == 200:
+                    if len(r.json()) > 0:
+                            out = r.json()[0]
+                            tokens.remove(key)
+                            variants = [v for v in out['s']]
+#			    print('key:%s' % key)
+                            tokens.append(variants[0])
 
     #Убрать лишние слова по стоп-листу
     stop_words = stopwords.words('russian')

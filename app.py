@@ -59,7 +59,13 @@ def test_message(message):
     stop_words = stopwords.words('russian')
     stop_words.extend(['что', 'это', 'так', 'вот', 'быть', 'как', 'в', '—', 'к', 'на'])
     tokens = [i for i in tokens if ( i not in stop_words )]
-    
+
+    #Нормализовать текст
+    tokens = [morph.parse(i)[0].normal_form for i in tokens if ( i not in stop_words )]
+
+    #Отсортировать
+    tokens.sort()
+
     emit('my_response',
          {'data': tokens, 'count': session['receive_count']})
 

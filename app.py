@@ -48,31 +48,33 @@ def test_message(message):
 	
     morph = pymorphy2.MorphAnalyzer()
     text = message['data']
-
+    
+    #Выкашивание опечаток
+    #Максимальный размер строки запроса — 10Кб
+    params = {'text': text, 'lang': 'ru'}
+    r = requests.get('http://speller.yandex.net/services/spellservice.json/checkText', params=params)
+    if r.status_code == 200:
+        if len(r.json()) > 0:
+            for result in r.json():
+                variants = [v for v in result['s']]
+                text=text.replace(result['word'],variants[0])
+                
+    text = text.lower()   
     tokens = word_tokenize(text)
 
     #Очистить текст от знаков препинания
     tokens = [i for i in tokens if ( i not in string.punctuation )]
 
-    #Выкашивание опечаток
-    for key in tokens:
-            params = {'text': key, 'lang': 'ru'}
-            r = requests.get('http://speller.yandex.net/services/spellservice.json/checkText', params=params)
-            if r.status_code == 200:
-                    if len(r.json()) > 0:
-                            out = r.json()[0]
-                            tokens.remove(key)
-                            variants = [v for v in out['s']]
-#			    print('key:%s' % key)
-                            tokens.append(variants[0])
-
     #Убрать лишние слова по стоп-листу
     stop_words = stopwords.words('russian')
-    stop_words.extend(['что', 'это', 'так', 'вот', 'быть', 'как', 'в', '—', 'к', 'на'])
+    stop_words.extend(['что','это','так','вот','быть','как','в','—','к','на','я','мы','вы','ты','он','она'])
     tokens = [i for i in tokens if ( i not in stop_words )]
 
     #Нормализовать текст
     tokens = [morph.parse(i)[0].normal_form for i in tokens if ( i not in stop_words )]
+
+    #Убрать дубликаты
+    tokens = list(set(tokens))
 
     #Отсортировать
     tokens.sort()
